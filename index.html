@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador de Tareas Diarias</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #eee;
+            margin: 5px 0;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 4px;
+        }
+        li.completed {
+            text-decoration: line-through;
+            background-color: #d4edda;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .suggestion {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #ffeb3b;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Planificador Diario</h1>
+        <input type="text" id="new-task" placeholder="Añadir nueva tarea">
+        <button onclick="addTask()">Añadir Tarea</button>
+        <ul id="task-list"></ul>
+        <div class="suggestion" id="suggestion-box"></div>
+    </div>
+
+    <script>
+        // Arreglo que contiene las tareas
+        let tasks = [];
+
+        // Función para añadir una tarea
+        function addTask() {
+            const taskInput = document.getElementById('new-task');
+            const task = taskInput.value;
+
+            if (task !== "") {
+                tasks.push({ task: task, completed: false });
+                taskInput.value = ''; // Limpiar el campo de texto
+                renderTasks(); // Actualizar la lista de tareas
+                provideSuggestion(); // Proveer una sugerencia
+            }
+        }
+
+        // Función para renderizar la lista de tareas
+        function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+
+            tasks.forEach((t, index) => {
+                const taskItem = document.createElement('li');
+                taskItem.className = t.completed ? 'completed' : '';
+                taskItem.innerHTML = `
+                    ${t.task}
+                    <button onclick="toggleComplete(${index})">${t.completed ? 'Deshacer' : 'Completar'}</button>
+                `;
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        // Función para marcar o desmarcar una tarea como completada
+        function toggleComplete(index) {
+            tasks[index].completed = !tasks[index].completed;
+            renderTasks();
+            provideSuggestion(); // Actualizar sugerencia después de completar/descompletar
+        }
+
+        // Función para ofrecer una sugerencia basada en las tareas
+        function provideSuggestion() {
+            const suggestionBox = document.getElementById('suggestion-box');
+            const pendingTasks = tasks.filter(t => !t.completed);
+
+            if (pendingTasks.length === 0) {
+                suggestionBox.innerHTML = '¡Buen trabajo! Has completado todas tus tareas.';
+            } else {
+                suggestionBox.innerHTML = `Sugerencia: Prioriza la tarea "${pendingTasks[0].task}".`;
+            }
+        }
+    </script>
+</body>
+</html>
